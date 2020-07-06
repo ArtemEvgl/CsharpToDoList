@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToDoList.BL.Controller;
+using ToDoList.BL.Model;
 
 namespace ToDoList.CMD
 {
     class Program
     {
+        //TODO: Проверка возраста, проверка даты планирования окончания и просроченности задачи
         static void Main(string[] args)
         {
             Console.WriteLine("Привет! Это ваш ежедневник");
@@ -17,6 +19,7 @@ namespace ToDoList.CMD
             var name = Console.ReadLine();
 
             var userController = new UserController(name);
+            userController.RegisterDisplayDelegate(new UserController.DisplayDelegateInfo(DisplayMsg));
             if (userController.IsNewUser)
             {
                 Console.Write("Введите дату рождения: ");
@@ -29,13 +32,16 @@ namespace ToDoList.CMD
             }
             while(true)
             {
+                Console.WriteLine("\n*****************");
                 Console.WriteLine("Что бы выхотели сделать?");
                 Console.WriteLine("F - Показать ваш список задач");
                 Console.WriteLine("A - Ввести задачу");
                 Console.WriteLine("E - Отметить выполненную задачу");
+                Console.WriteLine("P - Редактировать задачу");
                 Console.WriteLine("Z - Статистика");
                 Console.WriteLine("Q - выход");
-                
+                Console.WriteLine("*****************\n");
+
                 var key = Console.ReadKey();
                 Console.WriteLine();
                 switch(key.Key)
@@ -51,6 +57,13 @@ namespace ToDoList.CMD
                         userController.setNewTask(newTask);
                         break;
                     case ConsoleKey.E:
+                        foreach(ToDoList.BL.Model.Task task in userController.CurrentUser.Tasks)
+                        {
+                            if (task.Accept != true) Console.WriteLine(task.ToString());                            
+                        }
+                        Console.WriteLine("Введите Id задачи, которую хотите закрыть");
+                        Int32.TryParse(Console.ReadLine(), out int id);
+                        userController.SetAcceptTask(id);
                         break;
                     case ConsoleKey.Z:
                         break;
@@ -90,7 +103,14 @@ namespace ToDoList.CMD
             string descr = Console.ReadLine();
             DateTime endTask = ParseDate("планируемую дату окончания задачи");
             
-            return new ToDoList.BL.Model.Task(descr, sizeToDoList, endTask);
+            return new ToDoList.BL.Model.Task(descr, ++sizeToDoList, endTask);
+        }
+
+        public static void DisplayMsg(string msg)
+        {
+            Console.WriteLine("\n*****************");
+            Console.WriteLine($"=> {msg}");
+            Console.WriteLine("*****************\n");
         }
     }
 }

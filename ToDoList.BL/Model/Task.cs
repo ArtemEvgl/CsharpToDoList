@@ -64,9 +64,10 @@ namespace ToDoList.BL.Model
             {
                 throw new ArgumentNullException("Описание задачи не может быть пустым", nameof(description));
             }
+            Id = sizeListTasks;
             Description = description;
-            Id = 1;
-            if (sizeListTasks > 0) ++Id;
+            //Id = 1;
+            //if (sizeListTasks > 0) ++Id;
             EndTask = endTask;
         }
 
@@ -78,11 +79,11 @@ namespace ToDoList.BL.Model
             string endTime = "";
             if (Accept)
             {
-                status = "выполнена";
-                endTime = EndTask.ToString();
+                status = "выполнена";                
+                return $"{Id}. {Description} - {status} {EndTask}";
             }
-            return $"{Id}. {Description} - {status} {endTime}";
-            //todo: фвфывфыв
+            return $"{Id}. {Description} - {status}, запланированная дата окончания - {EndTask}";
+            
         }
     }
 }
