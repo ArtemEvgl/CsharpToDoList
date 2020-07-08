@@ -66,8 +66,6 @@ namespace ToDoList.BL.Model
             }
             Id = sizeListTasks;
             Description = description;
-            //Id = 1;
-            //if (sizeListTasks > 0) ++Id;
             EndTask = endTask;
         }
 
@@ -75,8 +73,7 @@ namespace ToDoList.BL.Model
 
         public override string ToString()
         {
-            string status = "не выполнена";
-            string endTime = "";
+            string status = "не выполнена";            
             if (Accept)
             {
                 status = "выполнена";                

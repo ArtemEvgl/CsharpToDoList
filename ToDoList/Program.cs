@@ -20,18 +20,24 @@ namespace ToDoList.CMD
 
             var userController = new UserController(name);            
             userController.infoMsges += (msg) => DisplayMsg(msg);
-            
-            //userController.RegisterDisplayDelegate(new UserController.DisplayDelegateInfo(DisplayMsg));
-            if (userController.IsNewUser)
+
+            while (userController.IsNewUser)
             {
                 Console.Write("Введите дату рождения: ");
                 var bithDate = ParseDate("дату рождения");
-                userController.setNewUserData(bithDate);
+                try
+                {
+                    userController.setNewUserData(bithDate);
+                } catch (ArgumentNullException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    continue;
+                }
                 Console.WriteLine($"Вы успешно зарегистрированы {userController.CurrentUser.ToString()}");
-            } else
-            {
-                Console.WriteLine("Добро пожаловать");
+                break;
             }
+            Console.WriteLine("Добро пожаловать");
+            
             while(true)
             {
                 Console.WriteLine("\n*****************");
@@ -75,8 +81,7 @@ namespace ToDoList.CMD
                     default:
                         break;
                 }
-            }
-            Console.ReadLine();
+            }            
         }
 
         private static DateTime ParseDate(string question)

@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace ToDoList.BL.Model
 {
+    //TODO: Проверить используется ли конструктор с двумя параметрами
     [Serializable]
     public class User
     {
+        private DateTime birthDay;
         public string Name { get; set; }
-        public DateTime BirthDay { get; set; }
+        public DateTime BirthDay { get { return birthDay; } 
+            set {
+                if (value < DateTime.Parse("01.01.1900") || value >= DateTime.Now)
+                    throw new ArgumentNullException("Невозможная дата рождения", nameof(DateTime));
+                else birthDay = value;
+            }
+        }
         
         public List<Task> Tasks { get; set; }
 
@@ -30,7 +38,7 @@ namespace ToDoList.BL.Model
             {
                 throw new ArgumentNullException("Имя не может быть пустым", nameof(name));
             }
-            if(birthDay < DateTime.Parse("01.01.1900") && birthDay >= DateTime.Now)
+            if(birthDay < DateTime.Parse("01.01.1900") || birthDay >= DateTime.Now)
             {
                 throw new ArgumentNullException("Невозможная дата рождения", nameof(DateTime));
             }
