@@ -11,8 +11,9 @@ namespace ToDoList.BL.Controller
     public class UserController : ControllerBase
     {
 
-        public delegate void DisplayDelegateInfo (string msg);
-        private DisplayDelegateInfo delegateHandler;
+        //public delegate void DisplayDelegateInfo (string msg);
+        //private DisplayDelegateInfo delegateHandler;
+        public event Action<string> infoMsges;
         
         public List<User> UserList { get; }
 
@@ -54,25 +55,25 @@ namespace ToDoList.BL.Controller
         }
 
         
-        public void RegisterDisplayDelegate(DisplayDelegateInfo dlg)
-        {
-            delegateHandler = dlg;
-        }
+        //public void RegisterDisplayDelegate(DisplayDelegateInfo dlg)
+        //{
+        //    delegateHandler = dlg;
+        //}
         public void SetAcceptTask(int id)
         {
             Model.Task task = CurrentUser.Tasks.First(i => i.Id == id); //Балуемся с Linq
             if(task != null)
             {
                 task.Accept = true;
-                delegateHandler("Задача успешно отмечена");
+                infoMsges("Задача успешно отмечена");
                 if(task.EndTask < DateTime.Now)
                 {
                     task.EndTask = DateTime.Now;
-                    delegateHandler("Вы просрочили задачу, нехорошо...");
+                    infoMsges("Вы просрочили задачу, нехорошо...");
                 }
             } else
             {
-                delegateHandler("Задача не найдена в списке, попробуйте еще раз");
+                infoMsges("Задача не найдена в списке, попробуйте еще раз");
             }
             Save($"users.xml", UserList);
         }

@@ -18,8 +18,10 @@ namespace ToDoList.CMD
             Console.WriteLine("Введите имя пользователя");
             var name = Console.ReadLine();
 
-            var userController = new UserController(name);
-            userController.RegisterDisplayDelegate(new UserController.DisplayDelegateInfo(DisplayMsg));
+            var userController = new UserController(name);            
+            userController.infoMsges += (msg) => DisplayMsg(msg);
+            
+            //userController.RegisterDisplayDelegate(new UserController.DisplayDelegateInfo(DisplayMsg));
             if (userController.IsNewUser)
             {
                 Console.Write("Введите дату рождения: ");
