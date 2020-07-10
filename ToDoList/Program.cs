@@ -10,7 +10,7 @@ namespace ToDoList.CMD
 {
     class Program
     {
-        //TODO: Проверка возраста, проверка даты планирования окончания и просроченности задачи
+        //TODO: Редактирование и Статистику
         static void Main(string[] args)
         {
             Console.WriteLine("Привет! Это ваш ежедневник");
@@ -27,10 +27,10 @@ namespace ToDoList.CMD
                 var bithDate = ParseDate("дату рождения");
                 try
                 {
-                    userController.setNewUserData(bithDate);
-                } catch (ArgumentNullException ex)
+                    userController.SetNewUserData(bithDate);
+                } catch (ArgumentNullException)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Ошибка при вводе даты рождения, попробуйте еще раз");
                     continue;
                 }
                 Console.WriteLine($"Вы успешно зарегистрированы {userController.CurrentUser.ToString()}");
@@ -55,23 +55,31 @@ namespace ToDoList.CMD
                 switch(key.Key)
                 {
                     case ConsoleKey.F:
-                        foreach(ToDoList.BL.Model.Task task in userController.CurrentUser.Tasks)
-                        {
-                            Console.WriteLine(task.ToString());
-                        }
+                        userController.CurrentUser.Tasks.ForEach(t => Console.WriteLine(t.ToString()));
                         break;
                     case ConsoleKey.A:
-                        ToDoList.BL.Model.Task newTask = EnterTask(userController.CurrentUser.Tasks.Count);
-                        userController.setNewTask(newTask);
+                        Console.Write("Введите описание задачи: ");
+                        string descr = Console.ReadLine();
+                        DateTime endTask = ParseDate("планируемую дату окончания задачи");
+                        try
+                        {
+                            userController.SetNewTask(endTask, descr);
+                        } catch(ArgumentNullException e)
+                        {
+                            Console.WriteLine($"Ошибка в {e.Message}");
+                        }
                         break;
                     case ConsoleKey.E:
-                        foreach(ToDoList.BL.Model.Task task in userController.CurrentUser.Tasks)
-                        {
-                            if (task.Accept != true) Console.WriteLine(task.ToString());                            
-                        }
+                        userController.CurrentUser.Tasks.Where(t => t.Accept = true).ToList().ForEach(t=> Console.WriteLine(t.ToString()));                        
+                        //foreach (ToDoList.BL.Model.Task task in userController.CurrentUser.Tasks)
+                        //{
+                        //    if (task.Accept != true) Console.WriteLine(task.ToString());                            
+                        //}
                         Console.WriteLine("Введите Id задачи, которую хотите закрыть");
                         Int32.TryParse(Console.ReadLine(), out int id);
                         userController.SetAcceptTask(id);
+                        break;
+                    case ConsoleKey.P:
                         break;
                     case ConsoleKey.Z:
                         break;
@@ -98,20 +106,12 @@ namespace ToDoList.CMD
                 {
                     Console.WriteLine($"Неверный формат {question}");
                 }
-
             }
 
             return birthDate;
         }
 
-        private static ToDoList.BL.Model.Task EnterTask(int sizeToDoList)
-        {
-            Console.Write("Введите описание задачи: ");
-            string descr = Console.ReadLine();
-            DateTime endTask = ParseDate("планируемую дату окончания задачи");
-            
-            return new ToDoList.BL.Model.Task(descr, ++sizeToDoList, endTask);
-        }
+        
 
         public static void DisplayMsg(string msg)
         {

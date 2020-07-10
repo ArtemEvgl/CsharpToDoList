@@ -12,6 +12,7 @@ namespace ToDoList.BL.Model
         public string Description { get; set; }
 
         public bool Accept { get; set; } = false;
+        public bool OnTime { get; set; }
 
         public DateTime StartTask { get; set; } = DateTime.Now;
 
@@ -76,8 +77,9 @@ namespace ToDoList.BL.Model
             string status = "не выполнена";            
             if (Accept)
             {
-                status = "выполнена";                
-                return $"{Id}. {Description} - {status} {EndTask}";
+                if (OnTime) status = "выполнена в срок";
+                else status = "была просрочена";
+                return $"{Id}. {Description} - {status}, дата окончания: {EndTask}";
             }
             return $"{Id}. {Description} - {status}, запланированная дата окончания - {EndTask}";
             

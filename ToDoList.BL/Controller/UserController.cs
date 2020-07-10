@@ -36,15 +36,17 @@ namespace ToDoList.BL.Controller
             }
         }
 
-        public void setNewUserData(DateTime birthDay)
+        public void SetNewUserData(DateTime birthDay)
         {
             CurrentUser.BirthDay = birthDay;
             Save($"users.xml", UserList);
         }
 
-        public void setNewTask(Model.Task task)
+        public void SetNewTask(DateTime dateTime, string descr)
         {
-            CurrentUser.Tasks.Add(task);
+            if (dateTime <= DateTime.Now) throw new ArgumentNullException("Ошибка в дате запланированной задачи, попробуйте еще раз",nameof(dateTime));
+            int sizeUserList = UserList.Count;
+            CurrentUser.Tasks.Add(new Model.Task(descr, ++sizeUserList, dateTime));
             Save($"users.xml", UserList);
         }
         private List<User> GetUserData()
@@ -60,17 +62,21 @@ namespace ToDoList.BL.Controller
             if(task != null)
             {
                 task.Accept = true;
-                infoMsges("Задача успешно отмечена");               
-                if (task.EndTask < DateTime.Now) infoMsges("Вы просрочили задачу, нехорошо...");
-                else infoMsges("Задача выполнена в срок, отлично!");
-                
-            } else infoMsges("Задача не найдена в списке, попробуйте еще раз");
-            
+                task.OnTime = true;
+                infoMsges("Задача успешно отмечена");
+                if (task.EndTask < DateTime.Now)
+                {
+                    infoMsges("Вы просрочили задачу, нехорошо...");
+                    task.OnTime = false;
+                }
+                else infoMsges("Задача выполнена в срок, отлично!");               
+            } 
+            else infoMsges("Задача не найдена в списке, попробуйте еще раз");           
             task.EndTask = DateTime.Now;
             Save($"users.xml", UserList);
         }
 
-
+        
 
     }
 }
