@@ -45,9 +45,10 @@ namespace ToDoList.BL.Controller
         public void SetNewTask(DateTime dateTime, string descr)
         {
             if (dateTime <= DateTime.Now) throw new ArgumentNullException("Ошибка в дате запланированной задачи, попробуйте еще раз",nameof(dateTime));
-            int sizeUserList = UserList.Count;
-            CurrentUser.Tasks.Add(new Model.Task(descr, ++sizeUserList, dateTime));
+            int sizeTaskList = CurrentUser.Tasks.Count;
+            CurrentUser.Tasks.Add(new Model.Task(descr, ++sizeTaskList, dateTime));
             Save($"users.xml", UserList);
+            infoMsges("Задача успешно добавлена");
         }
         private List<User> GetUserData()
         {
@@ -76,7 +77,18 @@ namespace ToDoList.BL.Controller
             Save($"users.xml", UserList);
         }
 
-        
-
+        public void EditTask(int id, DateTime endDateTime, string descr)
+        {
+            if (endDateTime <= DateTime.Now) throw new ArgumentNullException("Ошибка в дате запланированной задачи, попробуйте еще раз", nameof(endDateTime));
+            if (CurrentUser.Tasks.First(i => i.Id == id) is ToDoList.BL.Model.Task task)
+            {
+                task.EndTask = endDateTime;
+                task.Description = descr;
+                Save($"users.xml", UserList);
+                Console.WriteLine("Задача успешно отредактирована");
+            }
+            else throw new ArgumentNullException("Вы ошиблись при вводе номера задачи, попробуйте еще раз.");
+            
+        }
     }
 }

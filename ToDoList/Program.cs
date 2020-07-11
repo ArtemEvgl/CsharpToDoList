@@ -10,7 +10,7 @@ namespace ToDoList.CMD
 {
     class Program
     {
-        //TODO: Редактирование и Статистику
+        //TODO: Замечен небольшой баг при редактикровании и сделать Статистику. Далее с тестами. База.
         static void Main(string[] args)
         {
             Console.WriteLine("Привет! Это ваш ежедневник");
@@ -58,9 +58,7 @@ namespace ToDoList.CMD
                         userController.CurrentUser.Tasks.ForEach(t => Console.WriteLine(t.ToString()));
                         break;
                     case ConsoleKey.A:
-                        Console.Write("Введите описание задачи: ");
-                        string descr = Console.ReadLine();
-                        DateTime endTask = ParseDate("планируемую дату окончания задачи");
+                        var (endTask, descr) = EnterTask();
                         try
                         {
                             userController.SetNewTask(endTask, descr);
@@ -70,16 +68,28 @@ namespace ToDoList.CMD
                         }
                         break;
                     case ConsoleKey.E:
-                        userController.CurrentUser.Tasks.Where(t => t.Accept = true).ToList().ForEach(t=> Console.WriteLine(t.ToString()));                        
-                        //foreach (ToDoList.BL.Model.Task task in userController.CurrentUser.Tasks)
-                        //{
-                        //    if (task.Accept != true) Console.WriteLine(task.ToString());                            
-                        //}
+                        userController.CurrentUser.Tasks.Where(t => t.Accept = true).ToList().ForEach(t=> Console.WriteLine(t.ToString()));                                                
                         Console.WriteLine("Введите Id задачи, которую хотите закрыть");
-                        Int32.TryParse(Console.ReadLine(), out int id);
-                        userController.SetAcceptTask(id);
+                        Int32.TryParse(Console.ReadLine(), out int acceptId);
+                        userController.SetAcceptTask(acceptId);
                         break;
                     case ConsoleKey.P:
+                        while (true)
+                        {
+                            userController.CurrentUser.Tasks.ForEach(t => Console.WriteLine(t.ToString()));
+                            Console.WriteLine("Введите Id задачи, которую хотите откредактировать");
+                            Int32.TryParse(Console.ReadLine(), out int editId);
+                            var (endEditTask, editDescr) = EnterTask();
+                            try
+                            {
+                                userController.EditTask(editId, endEditTask, editDescr);
+                            } catch (ArgumentNullException ex)
+                            {
+                                Console.WriteLine($"Ошибка в {ex.Message}");
+                                continue;
+                            }
+                            break;
+                        }
                         break;
                     case ConsoleKey.Z:
                         break;
@@ -112,8 +122,15 @@ namespace ToDoList.CMD
         }
 
         
+        private static (DateTime date, string descr) EnterTask()
+        {
+            Console.Write("Введите описание задачи: ");
+            string descr = Console.ReadLine();
+            DateTime endTask = ParseDate("планируемую дату окончания задачи");
+            return (endTask, descr);
+        }
 
-        public static void DisplayMsg(string msg)
+        private static void DisplayMsg(string msg)
         {
             Console.WriteLine("\n*****************");
             Console.WriteLine($"=> {msg}");
