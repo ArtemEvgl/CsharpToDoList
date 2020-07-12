@@ -20,7 +20,7 @@ namespace ToDoList.CMD
 
             var userController = new UserController(name);            
             userController.infoMsges += (msg) => DisplayMsg(msg);
-
+             
             while (userController.IsNewUser)
             {
                 Console.Write("Введите дату рождения: ");
@@ -68,7 +68,12 @@ namespace ToDoList.CMD
                         }
                         break;
                     case ConsoleKey.E:
-                        userController.CurrentUser.Tasks.Where(t => t.Accept = true).ToList().ForEach(t=> Console.WriteLine(t.ToString()));                                                
+                        if(userController.CurrentUser.Tasks.Where(t => t.Accept == false).ToList().Count == 0)
+                        {
+                            Console.WriteLine("У вас нет открытых задач");
+                            break;
+                        }
+                        userController.CurrentUser.Tasks.Where(t => t.Accept == false).ToList().ForEach(t=> Console.WriteLine(t.ToString()));                                                
                         Console.WriteLine("Введите Id задачи, которую хотите закрыть");
                         Int32.TryParse(Console.ReadLine(), out int acceptId);
                         userController.SetAcceptTask(acceptId);
@@ -92,6 +97,7 @@ namespace ToDoList.CMD
                         }
                         break;
                     case ConsoleKey.Z:
+                        userController.GetStats();
                         break;
                     case ConsoleKey.Q:
                         Environment.Exit(0);
@@ -136,5 +142,7 @@ namespace ToDoList.CMD
             Console.WriteLine($"=> {msg}");
             Console.WriteLine("*****************\n");
         }
+
+        
     }
 }

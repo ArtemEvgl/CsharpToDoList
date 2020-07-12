@@ -13,6 +13,7 @@ namespace ToDoList.BL.Controller
        
         public event Action<string> infoMsges;
         
+        
         public List<User> UserList { get; }
 
         public User CurrentUser { get; }
@@ -59,8 +60,8 @@ namespace ToDoList.BL.Controller
 
         public void SetAcceptTask(int id)
         {
-            Model.Task task = CurrentUser.Tasks.First(i => i.Id == id); //Балуемся с Linq
-            if(task != null)
+            Model.Task task = CurrentUser.Tasks.FirstOrDefault(i => i.Id == id); //Балуемся с Linq
+            if (task != null)
             {
                 task.Accept = true;
                 task.OnTime = true;
@@ -70,9 +71,13 @@ namespace ToDoList.BL.Controller
                     infoMsges("Вы просрочили задачу, нехорошо...");
                     task.OnTime = false;
                 }
-                else infoMsges("Задача выполнена в срок, отлично!");               
-            } 
-            else infoMsges("Задача не найдена в списке, попробуйте еще раз");           
+                else infoMsges("Задача выполнена в срок, отлично!");
+            }
+            else
+            {
+                infoMsges("Задача не найдена в списке, попробуйте еще раз");
+                return;
+            }           
             task.EndTask = DateTime.Now;
             Save($"users.xml", UserList);
         }
@@ -89,6 +94,16 @@ namespace ToDoList.BL.Controller
             }
             else throw new ArgumentNullException("Вы ошиблись при вводе номера задачи, попробуйте еще раз.");
             
+        }
+
+        public void GetStats()
+        {
+            List<Model.Task> tasks = CurrentUser.Tasks;
+            double acceptTasks = tasks.Where(t => t.Accept == true).ToList().Count;
+            double percentAcceptTasks = acceptTasks / (double)tasks.Count * 100;
+            double percentAcceptTasksOnTime = tasks.Where(t => t.OnTime == true).ToList().Count / acceptTasks * 100;
+            infoMsges(String.Format("Процент выполненных задач:{0:f3}", percentAcceptTasks));
+            infoMsges(String.Format("Процент выполненных задач в срок: {0:f3}", percentAcceptTasksOnTime));
         }
     }
 }
