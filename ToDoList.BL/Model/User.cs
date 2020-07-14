@@ -61,5 +61,10 @@ namespace ToDoList.BL.Model
             return $"{Name} {Age}";
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj?.ToString() == ToString();
+        }
+
     }
 }

@@ -102,8 +102,8 @@ namespace ToDoList.BL.Controller
             double acceptTasks = tasks.Where(t => t.Accept == true).ToList().Count;
             double percentAcceptTasks = acceptTasks / (double)tasks.Count * 100;
             double percentAcceptTasksOnTime = tasks.Where(t => t.OnTime == true).ToList().Count / acceptTasks * 100;
-            infoMsges(String.Format("Процент выполненных задач:{0:f3}", percentAcceptTasks));
-            infoMsges(String.Format("Процент выполненных задач в срок: {0:f3}", percentAcceptTasksOnTime));
+            infoMsges(String.Format("Процент выполненных задач:{0:f2}", percentAcceptTasks));
+            infoMsges(String.Format("Процент выполненных задач в срок: {0:f2}", percentAcceptTasksOnTime));
         }
     }
 }
