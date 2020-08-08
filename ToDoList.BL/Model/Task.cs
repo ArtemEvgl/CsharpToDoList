@@ -84,5 +84,12 @@ namespace ToDoList.BL.Model
             return $"{Id}. {Description} - {status}, запланированная дата окончания - {EndTask}";
             
         }
+        public override bool Equals(object obj)
+        {
+            return obj?.ToString() == ToString();
+        }
+
     }
+
+
 }

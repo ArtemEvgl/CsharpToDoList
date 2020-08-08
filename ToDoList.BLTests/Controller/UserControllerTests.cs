@@ -26,6 +26,7 @@ namespace ToDoList.BL.Controller.Tests
             controller.SetNewUserData(birthDay);
             //Assert
             Assert.AreEqual(birthDay, controller.CurrentUser.BirthDay);
+        
         }
 
         [TestMethod()]
@@ -50,19 +51,43 @@ namespace ToDoList.BL.Controller.Tests
         [TestMethod()]
         public void SetAcceptTaskTest()
         {
-            Assert.Fail();
+            string descrTask = Guid.NewGuid().ToString();
+            string userName = Guid.NewGuid().ToString();
+            DateTime date = DateTime.Now.AddDays(10);
+            var controller = new UserController(userName);
+            controller.SetNewUserData(DateTime.Parse("01.01.1995"));
+            controller.infoMsges += (msg) => { return; };
+
+            controller.SetNewTask(date, descrTask);
+            Model.Task task = controller.CurrentUser.Tasks.First(i => i.Description == descrTask);
+
+            controller.SetAcceptTask(task.Id);
+
+            Assert.AreEqual(true, task.Accept);
         }
 
         [TestMethod()]
         public void EditTaskTest()
         {
-            Assert.Fail();
+            string descrTask = Guid.NewGuid().ToString();
+            string newDescrTask = Guid.NewGuid().ToString();
+            string userName = Guid.NewGuid().ToString();
+            DateTime date = DateTime.Now.AddDays(10);
+            var controller = new UserController(userName);
+            controller.SetNewUserData(DateTime.Parse("01.01.1995"));
+            controller.infoMsges += (msg) => { return; };
+            controller.SetNewTask(date, descrTask);
+            Model.Task task = controller.CurrentUser.Tasks.First(i => i.Description == descrTask);
+
+            controller.EditTask(task.Id, date, newDescrTask);
+
+            Assert.AreEqual(newDescrTask, task.Description);
         }
 
-        [TestMethod()]
-        public void GetStatsTest()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void GetStatsTest()
+        //{
+        //    Assert.Fail();
+        //}
     }
 }

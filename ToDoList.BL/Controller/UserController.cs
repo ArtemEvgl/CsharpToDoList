@@ -60,9 +60,10 @@ namespace ToDoList.BL.Controller
 
         public void SetAcceptTask(int id)
         {
-            Model.Task task = CurrentUser.Tasks.FirstOrDefault(i => i.Id == id); //Балуемся с Linq
+            Model.Task task = CurrentUser.Tasks.First(i => i.Id == id); //Балуемся с Linq            
             if (task != null)
             {
+                CurrentUser.Tasks.Remove(task);
                 task.Accept = true;
                 task.OnTime = true;
                 infoMsges("Задача успешно отмечена");
@@ -79,6 +80,7 @@ namespace ToDoList.BL.Controller
                 return;
             }           
             task.EndTask = DateTime.Now;
+            CurrentUser.Tasks.Add(task);
             Save($"users.xml", UserList);
         }
 
@@ -86,9 +88,10 @@ namespace ToDoList.BL.Controller
         {
             if (endDateTime <= DateTime.Now) throw new ArgumentNullException("Ошибка в дате запланированной задачи, попробуйте еще раз", nameof(endDateTime));
             if (CurrentUser.Tasks.First(i => i.Id == id) is ToDoList.BL.Model.Task task)
-            {
+            {                
                 task.EndTask = endDateTime;
                 task.Description = descr;
+                
                 Save($"users.xml", UserList);
                 Console.WriteLine("Задача успешно отредактирована");
             }

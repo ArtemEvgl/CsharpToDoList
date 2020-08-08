@@ -15,7 +15,7 @@ namespace ToDoList.BL.Controller
         {
             
             var formatter = new XmlSerializer(item.GetType());
-            using(var fs = new FileStream(fileName, FileMode.OpenOrCreate))
+            using(var fs = new FileStream(fileName, FileMode.Create))
             {
                 formatter.Serialize(fs, item);
             }
